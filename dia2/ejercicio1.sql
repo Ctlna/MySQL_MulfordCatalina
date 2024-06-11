@@ -55,4 +55,27 @@ create table curso_escolar(
     anyo_fin year(4) not null
 );
 
+-- crear tabla asignatura
+create table asignatura(
+    id int auto_increment primary key,
+    nombre varchar(100) not null,
+    creditos float not null,
+    tipo enum("a","b","c") not null,
+    curso tinyint(3),
+    id_profesor int(10),
+    id_grado int(10),
+    foreign key (id_profesor) references persona(id),
+    foreign key (id_grado) references grado(id)
+);
+
+-- Crear la tabla de alumno se matricula
+create table alum_matri(
+    id_alumno int primary key,
+    id_asignatura int not null,
+    id_curso_escolar int not null,
+    foreign key (id_alumno) references persona(id),
+    foreign key (id_asignatura) references asignatura(id),
+    foreign key (id_curso_escolar) references curso_escolar(id)
+);
+
 -- Desarrollado por Catalina Mulford Monroy / ID.1.097.490.150

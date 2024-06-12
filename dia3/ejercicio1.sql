@@ -914,4 +914,25 @@ INSERT INTO oficina VALUES ('SYD-AU','Sydney','Australia','APAC','NSW 2010','+61
 INSERT INTO oficina VALUES ('TAL-ES','Talavera de la Reina','España','Castilla-LaMancha','45632','+34 925 867231','Francisco Aguirre, 32','5º piso (exterior)');
 INSERT INTO oficina VALUES ('TOK-JP','Tokyo','Japón','Chiyoda-Ku','102-8578','+81 33 224 5000','4-1 Kioicho','');
 
+-- código de oficina y la ciudad 
+select codigo_oficina,ciudad from oficina;
+
+-- ciudad y el teléfono de las oficinas de España
+select ciudad,telefono from oficina where pais='España';
+
+-- nombre, apellidos y email de los empleados cuyo jefe tiene un código igual a 7
+select nombre,apellido1,apellido2,email from empleado where codigo_jefe=7;
+
+-- nombre, apellidos y puesto de aquellos empleados que no sean representantes de ventas
+select nombre,apellido1,apellido2,puesto from empleado where puesto != 'Representante Ventas';
+
+-- nombre de los todos los clientes españoles
+select nombre_cliente from cliente where pais='Spain';
+
+-- distintos estados por los que puede pasar un pedido
+select distinct estado from pedido;
+
+-- código de cliente de aquellos clientes que realizaron algún pago en 2008:
+select distinct codigo_cliente from pago where fecha_pago like '2008';
+
 -- Desarrollado por Catalina Mulford / ID.1.097.490.150

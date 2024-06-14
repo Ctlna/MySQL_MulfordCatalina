@@ -963,4 +963,6 @@ from empleado
 inner join empleado jefe on empleado.codigo_jefe = jefe.codigo_empleado
 inner join empleado jefe2 on empleado.codigo_jefe = jefe.codigo_empleado;
 
+
+
 -- Desarrollado por Catalina Mulford / ID.1.097.490.150

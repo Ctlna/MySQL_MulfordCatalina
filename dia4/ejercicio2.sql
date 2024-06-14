@@ -916,19 +916,51 @@ INSERT INTO oficina VALUES ('SYD-AU','Sydney','Australia','APAC','NSW 2010','+61
 INSERT INTO oficina VALUES ('TAL-ES','Talavera de la Reina','España','Castilla-LaMancha','45632','+34 925 867231','Francisco Aguirre, 32','5º piso (exterior)');
 INSERT INTO oficina VALUES ('TOK-JP','Tokyo','Japón','Chiyoda-Ku','102-8578','+81 33 224 5000','4-1 Kioicho','');
 
--- --------------------------------- CONSULTAS CON ALGO JOIN!!! -------------------------------
-
+-- --------------------------------- CONSULTAS CON JOIN!!! -------------------------------
 
 -- Nombre de cada cliente y el nombre y apellido de su representante de ventas.
-SELECT cliente.nombre_cliente as Cliente, empleado.nombre as Nombre_Rep, empleado.apellido1 as Apellido_Rep
-FROM cliente
+select cliente.nombre_cliente , Cliente, empleado.nombre as Nombre_Rep, empleado.apellido1 as Apellido_Rep
+from cliente
 inner join empleado on codigo_empleado_rep_ventas = empleado.codigo_empleado;
 
 -- Nombre de los clientes que hayan realizado pagos junto con el nombre de sus representantes de ventas.
-SELECT DISTINCT cliente.nombre_cliente as Cliente, pago.id_transaccion as Realizo_Pago, empleado.nombre as Nombre_Rep
-FROM cliente
-inner join pago on cliente.codigo_cliente = pago.codigo_cliente
-inner join empleado on codigo_empleado_rep_ventas = empleado.codigo_empleado;
+select c.nombre_cliente, e.nombre,e.apellido1,e.apellido2
+from cliente c
+inner join pago p on c.codigo_cliente = p.codigo_cliente
+inner join empleado e
+on c.codigo_empleado_rep_ventas = e.codigo_empleado;
 
+-- nombre de los clientes que han hecho pagos y el nombre de sus representantes 
+-- junto con la ciudad de la oficina a la que pertenece el representante
+select c.nombre_cliente, e.nombre,e.apellido1,e.apellido2, o.ciudad
+from cliente c
+inner join pago p on c.codigo_cliente = p.codigo_cliente
+inner join empleado e
+on c.codigo_empleado_rep_ventas = e.codigo_empleado
+inner join oficina o on e.codigo_oficina = e.codigo_oficina;
+
+-- nombre de los clientes que no han hecho pagos y el nombre de sus representantes 
+-- junto con la ciudad de la oficina a la que pertenece el representante.
+select c.nombre_cliente, e.nombre,e.apellido1,e.apellido2, o.ciudad
+from cliente c
+inner join pago p on c.codigo_cliente = p.codigo_cliente
+inner join empleado e
+on c.codigo_empleado_rep_ventas = e.codigo_empleado
+inner join oficina o on e.codigo_oficina = e.codigo_oficina
+where p.codigo_cliente is null;
+
+-- Lista la dirección de las oficinas que tengan clientes en Fuenlabrada.
+select distinct o.linea_direccion1,o.linea_direccion2
+from cliente c
+inner join empleado e on c.codigo_empleado_rep_ventas = e.codigo_empleado
+inner join oficina o on e.codigo_oficina = o.codigo_oficina
+where c.ciudad = 'Fuenlabrada' ;
+
+-- Devuelve un listado con el nombre de los empleados 
+-- junto con el nombre de sus jefes.
+select empleado.nombre as NombreEmpleado, jefe.nombre as NombreJefe, jefe2.nombre as NombreJefe_Jefe
+from empleado
+inner join empleado jefe on empleado.codigo_jefe = jefe.codigo_empleado
+inner join empleado jefe2 on empleado.codigo_jefe = jefe.codigo_empleado;
 
 -- Desarrollado por Catalina Mulford / ID.1.097.490.150

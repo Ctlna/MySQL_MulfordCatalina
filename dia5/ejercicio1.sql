@@ -1,4 +1,4 @@
--- #####################
+-- #t####################
 -- ### DIA # 5 - RELACIONAMIENTO DE CONSULTAS / FINALIZACIÓ ACTIVIDAD###
 -- ### EJERCICIO 2 ###	
 -- #####################
@@ -309,7 +309,7 @@ INSERT INTO producto VALUES ('OR-251','Zamia Furfuracaea','Ornamentales','90 - 1
 INSERT INTO producto VALUES ('OR-99','Mimosa DEALBATA Gaulois Astier  ','Ornamentales','200-225','Viveros EL OASIS','Acacia dealbata. Nombre común o vulgar: Mimosa fina, Mimosa, Mimosa común, Mimosa plateada, Aromo francés. Familia: Mimosaceae. Origen: Australia, Sureste, (N. G. del Sur y Victoria). Arbol de follaje persistente muy usado en parques por su atractiva floración amarilla hacia fines del invierno. Altura: de 3 a 10 metros generalmente. Crecimiento rápido. Follaje perenne de tonos plateados, muy ornamental. Sus hojas son de textura fina, de color verde y sus flores amarillas que aparecen en racimos grandes. Florece de Enero a Marzo (Hemisferio Norte). Legumbre de 5-9 cm de longitud, recta o ligeramente curvada, con los bordes algo constreñidos entre las semillas, que se disponen en el fruto longitudinalmente...',100,14,11);
 
 create table detalle_pedido(
-	codigo_pedido int(11),
+    codigo_pedido int(11),
     codigo_producto varchar(15),
     cantidad int(11)not null,
     precio_unidad decimal(15,2)not null,
@@ -994,5 +994,38 @@ LEFT JOIN pago p on p.codigo_cliente = c.codigo_cliente
 LEFT JOIN pedido p on p.codigo_cliente = c.codigo_cliente
 where p.codigo_pedido is null 
 and p.id_transaccion is null;
+
+-- ##### Parte día 5 ####
+
+-- 1.clientes que no han realizado ningún pago.
+select c.nombre_cliente,c.codigo_cliente,p.id_transaccion
+from cliente c
+LEFT JOIN pago p on p.codigo_cliente = c.codigo_cliente
+where p.id_transaccion is null;
+
+-- 2.clientes que no han realizado ningún pedido.
+select c.nombre_cliente,c.codigo_cliente,p.codigo_pedido
+from cliente c
+LEFT JOIN pedido p on p.codigo_cliente = c.codigo_cliente
+where p.codigo_pedido is null;
+
+-- 3.clientes que no han realizado ningún pago y los que no han realizado ningún pedido.
+select c.nombre_cliente,c.codigo_cliente,pago.id_transaccion,pedido.codigo_pedido
+from cliente c
+LEFT JOIN pago p on p.codigo_cliente = c.codigo_cliente
+LEFT JOIN pedido p on p.codigo_cliente = c.codigo_cliente
+where p.codigo_pedido is null 
+and p.id_transaccion is null;
+
+-- 11.Devuelve un listado con los clientes que han realizado algún pedido 
+-- pero no han realizado ningún pago.
+select c.nombre_cliente,pedido.fecha_pedido, pedido.estado
+from cliente c
+right join pedido  on pedido.codigo_cliente = c.codigo_cliente
+right join pago a on pago.codigo_cliente = c.codigo_cliente
+where pago.forma_pago is null;
+
+-- 12 Devuelve un listado con los datos de los empleados que no tienen 
+-- clientes asociados y el nombre de su jefe asociado.
 
 -- Desarrollado por Catalina Mulford / ID.1.097.490.150

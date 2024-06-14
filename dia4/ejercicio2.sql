@@ -916,85 +916,19 @@ INSERT INTO oficina VALUES ('SYD-AU','Sydney','Australia','APAC','NSW 2010','+61
 INSERT INTO oficina VALUES ('TAL-ES','Talavera de la Reina','España','Castilla-LaMancha','45632','+34 925 867231','Francisco Aguirre, 32','5º piso (exterior)');
 INSERT INTO oficina VALUES ('TOK-JP','Tokyo','Japón','Chiyoda-Ku','102-8578','+81 33 224 5000','4-1 Kioicho','');
 
--- --------------------------------- CONSULTAS!!! -------------------------------
-
--- código de oficina y la ciudad 
-select codigo_oficina,ciudad 
-from oficina;
-
--- ciudad y el teléfono de las oficinas de España
-select ciudad,telefono 
-from oficina 
-where pais='España';
-
--- nombre, apellidos y email de los empleados cuyo jefe tiene un código igual a 7
-select nombre,apellido1,apellido2,email 
-from empleado 
-where codigo_jefe=7;
-
--- nombre del puesto, nombre, apellidos y email del jefe de la empresa
-select nombre,apellido1,apellido2,email 
-from empleado 
-where puesto = 'Director General';
-
--- nombre, apellidos y puesto de aquellos empleados que no sean representantes de ventas
-select nombre,apellido1,apellido2,puesto 
-from empleado 
-where puesto != 'Representante Ventas';
-
--- nombre de los todos los clientes españoles
-select nombre_cliente 
-from cliente 
-where pais='Spain';
-
--- distintos estados por los que puede pasar un pedido
-select distinct estado 
-from pedido;
+-- --------------------------------- CONSULTAS CON ALGO JOIN!!! -------------------------------
 
 
--- código de cliente de aquellos clientes que realizaron algún pago en 2008:
-select distinct codigo_cliente 
-from pago 
-where year(fecha_pago) = '2008';
+-- Nombre de cada cliente y el nombre y apellido de su representante de ventas.
+SELECT cliente.nombre_cliente as Cliente, empleado.nombre as Nombre_Rep, empleado.apellido1 as Apellido_Rep
+FROM cliente
+inner join empleado on codigo_empleado_rep_ventas = empleado.codigo_empleado;
 
-select distinct codigo_cliente 
-from pago 
-where date_format(fecha_pago,'%Y') = '2008';
+-- Nombre de los clientes que hayan realizado pagos junto con el nombre de sus representantes de ventas.
+SELECT DISTINCT cliente.nombre_cliente as Cliente, pago.id_transaccion as Realizo_Pago, empleado.nombre as Nombre_Rep
+FROM cliente
+inner join pago on cliente.codigo_cliente = pago.codigo_cliente
+inner join empleado on codigo_empleado_rep_ventas = empleado.codigo_empleado;
 
-
--- código de pedido, código de cliente, fecha esperada y fecha de entrega de los pedidos que no han sido entregados a tiempo.
-select codigo_pedido,codigo_cliente,fecha_esperada,fecha_entrega 
-from pedido 
-where 1 and estado= 'Entregado' and comentarios like '%tarde%' ;
-
--- Código de pedido, código de cliente, fecha esperada y fecha de entrega de los 
--- pedidos cuya fecha de entrega ha sido al menos dos días antes.
-select codigo_pedido,codigo_cliente,fecha_esperada,fecha_entrega 
-from pedido 
-where date_format(fecha_esperada,'%d') -2 >= fecha_entrega;
-
-select distinct  codigo_pedido,codigo_cliente,fecha_esperada,fecha_entrega 
-from pedido 
-where adddate(fecha_esperada, interval -2 day) >= fecha_entrega;
-
-select distinct  codigo_pedido,codigo_cliente,fecha_esperada,fecha_entrega 
-from pedido 
-where (fecha_esperada);
-
--- pedidos que fueron en 2009.
-select * 
-from pedido 
-where year(fecha_pedido) = '2009';
-
--- pedidos que han sido  en el mes de enero de cualquier año
-select * 
-from pedido 
-where month(fecha_pedido) = '01';
-
--- Pagos que se realizaron en el año 2008 mediante Paypal. De mayor a menor.
-select * 
-from pago 
-where 1 and year(fecha_pago) = '2008'and forma_pago='PayPal'
-order by codigo_cliente desc;
 
 -- Desarrollado por Catalina Mulford / ID.1.097.490.150

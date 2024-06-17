@@ -1017,15 +1017,69 @@ LEFT JOIN pedido p on p.codigo_cliente = c.codigo_cliente
 where p.codigo_pedido is null 
 and p.id_transaccion is null;
 
--- 11.Devuelve un listado con los clientes que han realizado algún pedido 
--- pero no han realizado ningún pago.
-select c.nombre_cliente,pedido.fecha_pedido, pedido.estado
-from cliente c
-right join pedido  on pedido.codigo_cliente = c.codigo_cliente
-right join pago a on pago.codigo_cliente = c.codigo_cliente
-where pago.forma_pago is null;
+-- 11. Devuelve un listado con los clientes que han realizado algún pedido 
+-- pero no han realizado ningún pago usando RIGHT JOIN.
 
--- 12 Devuelve un listado con los datos de los empleados que no tienen 
--- clientes asociados y el nombre de su jefe asociado.
+select c.nombre_cliente, p.fecha_pedido, p.estado
+from cliente c
+right join pedido p on p.codigo_cliente = c.codigo_cliente
+left join pago pa on pa.codigo_cliente = c.codigo_cliente
+where pa.codigo_cliente is null;
+-- 12.
+select e.codigo_empleado, e.nombre, e.apellido1, e.apellido2, e.extension, e.email, e.codigo_oficina, 
+       e.codigo_jefe, e.puesto, concat(j.nombre, ' ', j.apellido1) as nombre_jefe
+from empleado e
+right join cliente c on e.codigo_empleado = c.codigo_empleado_rep_ventas
+left join empleado j on e.codigo_jefe = j.codigo_empleado
+where c.codigo_cliente is null;
+Catalina Mulford Monroy — ayer a las 20:44
+-- 2. ¿Cuántos clientes tiene cada país?
+select pais, count(*) as total_clientes
+from cliente
+group by pais;
+
+-- 3. ¿Cuál fue el pago medio en 2009?
+select avg(total) as pago_medio_2009
+from pago
+where year(fecha_pago) = 2009;
+-- 15. La facturación que ha tenido la empresa en toda la historia,
+indicando la base imponible, el IVA y el total facturado. La
+base imponible se calcula sumando el coste del producto
+por el número de unidades vendidas de la
+tabla detalle_pedido. El IVA es el 21 % de la base
+imponible, y el total la suma de los dos campos anteriores.
+
+SELECT 
+    SUM(d.cantidad * p.precio_venta) AS base_imponible,
+    SUM(d.cantidad * p.precio_venta * 0.21) AS iva,
+    SUM(d.cantidad * p.precio_venta * 1.21) AS total_facturado
+FROM detalle_pedido d
+LEFT JOIN producto p ON d.codigo_producto = p.codigo_producto;
+-- 3. Devuelve el nombre del producto del que se han vendido
+más unidades. (Tenga en cuenta que tendrá que calcular
+cuál es el número total de unidades que se han vendido de
+cada producto a partir de los datos de la
+tabla detalle_pedido)
+
+select 
+    nombre,
+    sum(cantidad) as total_unidades_vendidas
+from detalle_pedido
+left join producto using (codigo_producto)
+group by nombre
+order by total_unidades_vendidas desc
+limit 1; 
+-- 4. Clientes cuyo límite de crédito sea mayor que los pagos que hayan realizado.
+select c.nombre_cliente, c.apellido_contacto, c.email
+from cliente c
+left join pago p using (codigo_cliente)
+group by c.codigo_cliente
+having ifnull(sum(p.total), 0) < c.limite_credito;
+
+-- 7. Nombre, apellidos y email de los empleados a cargo de Alberto Soria.
+select e.nombre, e.apellido1, e.apellido2, e.email
+from empleado e
+right join empleado j on e.codigo_empleado = j.codigo_jefe
+where concat(j.nombre, ' ', j.apellido1) = 'Alberto Soria';
 
 -- Desarrollado por Catalina Mulford / ID.1.097.490.150
